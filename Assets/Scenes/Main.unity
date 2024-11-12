@@ -648,9 +648,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 598af907065c778458dce50013f6d743, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpForce: 40
-  speed: 20
-  dashingPower: 28
+  jumpForce: 24
+  speed: 12
   rb: {fileID: 1292354101}
   groundChecker: {fileID: 1133260695}
   wallChecker: {fileID: 2134023730}
