@@ -50,6 +50,7 @@ public class PlayerController : MonoBehaviour
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         }
+
         if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
@@ -74,14 +75,7 @@ public class PlayerController : MonoBehaviour
 
     private bool isGrounded()
     {
-        if (Physics2D.OverlapCircle(groundChecker.position, .2f, groundLayer))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return Physics2D.OverlapCircle(groundChecker.position, 0.2f, groundLayer);
     }
 
     private bool isWalled()
@@ -105,14 +99,13 @@ public class PlayerController : MonoBehaviour
 
     private void Flip()
     {
-            if (rb.velocity.x > 0)
-            {
-                GetComponent<SpriteRenderer>().flipX = true;
-            }
-            if (rb.velocity.x < 0)
-            {
-                GetComponent<SpriteRenderer>().flipX = false;
-            }
+        if (!isFacingRight && rb.velocity.x > 0 || isFacingRight && rb.velocity.x < 0)
+        {
+            isFacingRight = !isFacingRight;
+            Vector3 localScale = transform.localScale;
+            localScale.x *= -1f;
+            transform.localScale = localScale;
+        }
     }
 
 
@@ -136,15 +129,4 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(dashingCooldown);
         canDash = true;
     } 
-
-    // private void Flip()
-    // {
-    //     if (isFacingRight && xMove < 0f || !isFacingRight && xMove > 0f)
-    //     {
-    //         isFacingRight = !isFacingRight;
-    //         Vector3 localScale = transform.localScale;
-    //         localScale.x *= -1f;
-    //         transform.localScale = localScale;
-    //     }
-    // }
 }
