@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection.Emit;
@@ -11,6 +12,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float jumpForce = 10;
     [SerializeField] float speed = 8f; 
     bool mayJump = true;
+    bool isFacingRight;
+
+    private bool isWallSliding;
+    private float wallSlidingSpeed = 2f;
 
     private float dashingPower = 24f;
     private float dashingTime = 0.2f;
@@ -22,6 +27,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundChecker;
     [SerializeField] private Transform wallChecker;
+    [SerializeField] private Transform wallCheckerRight;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask wallLayer;
 
@@ -44,7 +50,8 @@ public class PlayerController : MonoBehaviour
         {
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
         }
-    
+
+        WallSlide();
 
 
         if(Input.GetKeyDown(KeyCode.Q) && canDash == true)
@@ -63,7 +70,7 @@ public class PlayerController : MonoBehaviour
 
     private bool isGrounded()
     {
-        if (Physics2D.OverlapCircle(groundChecker.position, .2f, groundLayer))
+        if (Physics2D.OverlapCircle(groundChecker.position, 0.2f, groundLayer))
         {
             return true;
         }
@@ -76,6 +83,19 @@ public class PlayerController : MonoBehaviour
     private bool isWalled()
     {
         return Physics2D.OverlapCircle(wallChecker.position, 0.2f, wallLayer);
+    }
+
+    private void WallSlide()
+    {
+        if (isWalled() && !isGrounded() || xMove != 0f)
+        {
+            isWallSliding = true;
+            rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -wallSlidingSpeed, float.MaxValue));
+        }
+        else
+        {
+            isWallSliding = false;
+        }
     }
 
 
@@ -109,23 +129,21 @@ public class PlayerController : MonoBehaviour
             if (rb.velocity.x > 0)
             {
                 GetComponent<SpriteRenderer>().flipX = true;
+                Vector3 pos = wallChecker.position;
+                pos.x = -pos.x;
+                wallChecker.position = pos;
+                isFacingRight = true; 
+
             }
             if (rb.velocity.x < 0)
             {
                 GetComponent<SpriteRenderer>().flipX = false;
+                Vector3 pos = wallChecker.position;
+                pos.x = -pos.x;
+                wallChecker.position = pos;
+                isFacingRight = false;
             }
     }
-    
-    // private void Flip()
-    // {
-    //     if (!isFacingRight && xMove < 0f || isFacingRight && xMove > 0f)
-    //     {
-    //         isFacingRight = !isFacingRight;
-    //         Vector3 localScale = transform.localScale;
-    //         localScale.x *= -1f;
-    //         transform.localScale = localScale;
-    //     }
-    // }
 
 
 }
