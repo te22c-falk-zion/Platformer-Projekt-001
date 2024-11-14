@@ -128,25 +128,8 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(dashingCooldown);
         canDash = true;
     } 
+    
 
-    // private void Flip()
-    // {
-    //         if (rb.velocity.x > 0)
-    //         {
-    //             GetComponent<SpriteRenderer>().flipX = true;
-    //             Vector3 pos = wallChecker.position;
-    //             wallChecker.position = new Vector3(-wallCheckerPosition,transform.position.y,0f);
-    //             isFacingRight = true; 
-
-    //         }
-    //         if (rb.velocity.x < 0)
-    //         {
-    //             GetComponent<SpriteRenderer>().flipX = false;
-    //             Vector3 pos = wallChecker.position;
-    //             wallChecker.position = new Vector3(-wallCheckerPosition,transform.position.y,0f);
-    //             isFacingRight = false;
-    //         }
-    // }
 
         private void Flip()
     {
