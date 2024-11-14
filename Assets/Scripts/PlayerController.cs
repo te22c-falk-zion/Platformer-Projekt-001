@@ -7,9 +7,11 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {   
+    private int health = 100;
     private float xMove;
     [SerializeField] float jumpForce = 10;
     [SerializeField] float speed = 8f; 
@@ -38,9 +40,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask wallLayer;
 
 
-    void Awake() 
+    void Start() 
     {
-        
+        health = 100;
     }
     void Update()
     {
@@ -51,7 +53,7 @@ public class PlayerController : MonoBehaviour
         }
 
         float xMove = Input.GetAxisRaw("Horizontal");
-        
+        rb.velocity = new Vector2(xMove * speed, rb.velocity.y); 
 
         if (Input.GetButtonDown("Jump") && isGrounded())
         {
@@ -76,12 +78,6 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate() 
     {
-        rb.velocity = new Vector2(xMove * speed, rb.velocity.y); 
-
-        if(isWallSliding == true)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -wallSlidingSpeed, float.MaxValue));
-        }
         
     }
 
@@ -104,9 +100,10 @@ public class PlayerController : MonoBehaviour
 
     private void WallSlide()
     {
-        if (isWalled() && !isGrounded() && xMove != 0f)
+        if (isWalled() && !isGrounded() || xMove != 0f)
         {
             isWallSliding = true;
+            rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -wallSlidingSpeed, float.MaxValue));
         }
         else
         {
@@ -114,19 +111,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void WallJump()
-    {
-        if(Input.GetButtonDown("Jump") && wallJumpCounter <= 3)
-        {
+    // private void WallJump()
+    // {
+    //     if(Input.GetButtonDown("Jump") && wallJumpCounter <= 3)
+    //     {
 
-            rb.velocity = new Vector2(wallJumpingPower.x, wallJumpingPower.y);
-            wallJumpCounter ++;
-        }
-        if(isGrounded())
-        {
-            wallJumpCounter = 0;
-        }
-    }
+    //         rb.velocity = new Vector2(wallJumpingPower.x, wallJumpingPower.y);
+    //         wallJumpCounter ++;
+    //     }
+    //     if(isGrounded())
+    //     {
+    //         wallJumpCounter = 0;
+    //     }
+    // }
 
 
 
@@ -161,6 +158,16 @@ public class PlayerController : MonoBehaviour
             isFacingRight = !isFacingRight;
             localScale.x *= -1f;
             transform.localScale = localScale;
+        }
+    }
+
+    public void TakeDamage(int amount)
+    {
+        health -= amount;
+        Debug.Log("" + health);
+        if (health <= 0)
+        {
+            SceneManager.LoadScene(1);
         }
     }
 

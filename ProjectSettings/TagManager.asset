@@ -45,3 +45,12 @@ TagManager:
   - name: Projectile
     uniqueID: 3009039747
     locked: 0
+  - name: Player
+    uniqueID: 1445499615
+    locked: 0
+  - name: trail
+    uniqueID: 3385043495
+    locked: 0
+  - name: Map
+    uniqueID: 1888938325
+    locked: 0

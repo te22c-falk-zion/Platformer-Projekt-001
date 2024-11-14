@@ -4,15 +4,20 @@ using UnityEngine;
 
 public class bulletmanager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField]
+    float timeBetweenBullet;
+    float timeSinceLastBullet;
 
-    // Update is called once per frame
+    [SerializeField]
+    GameObject bulletPrefab;
+
     void Update()
     {
-        
+        timeSinceLastBullet += Time.deltaTime;
+        if (timeSinceLastBullet > timeBetweenBullet)
+        {
+            Instantiate(bulletPrefab);
+            timeSinceLastBullet = 0f;
+        }
     }
 }
