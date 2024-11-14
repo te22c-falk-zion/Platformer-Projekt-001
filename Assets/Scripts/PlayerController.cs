@@ -13,13 +13,16 @@ public class PlayerController : MonoBehaviour
     private float xMove;
     [SerializeField] float jumpForce = 10;
     [SerializeField] float speed = 8f; 
-    bool mayJump = true;
+
     bool isFacingRight = false;
     private float wallCheckerPosition;
     Vector3 pos;
 
     private bool isWallSliding;
     private float wallSlidingSpeed = 2f;
+    private int wallJumpCounter;
+    private Vector2 wallJumpingPower = new Vector2(8f, 16f);
+    bool mayJump = true;
 
     private float dashingPower = 24f;
     private float dashingTime = 0.2f;
@@ -48,7 +51,7 @@ public class PlayerController : MonoBehaviour
         }
 
         float xMove = Input.GetAxisRaw("Horizontal");
-        rb.velocity = new ( xMove * speed, rb.velocity.y ); 
+        
 
         if (Input.GetButtonDown("Jump") && isGrounded())
         {
@@ -73,6 +76,12 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate() 
     {
+        rb.velocity = new Vector2(xMove * speed, rb.velocity.y); 
+
+        if(isWallSliding == true)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -wallSlidingSpeed, float.MaxValue));
+        }
         
     }
 
@@ -95,14 +104,27 @@ public class PlayerController : MonoBehaviour
 
     private void WallSlide()
     {
-        if (isWalled() && !isGrounded() || xMove != 0f)
+        if (isWalled() && !isGrounded() && xMove != 0f)
         {
             isWallSliding = true;
-            rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -wallSlidingSpeed, float.MaxValue));
         }
         else
         {
             isWallSliding = false;
+        }
+    }
+
+    private void WallJump()
+    {
+        if(Input.GetButtonDown("Jump") && wallJumpCounter <= 3)
+        {
+
+            rb.velocity = new Vector2(wallJumpingPower.x, wallJumpingPower.y);
+            wallJumpCounter ++;
+        }
+        if(isGrounded())
+        {
+            wallJumpCounter = 0;
         }
     }
 
