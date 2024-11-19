@@ -133,11 +133,12 @@ public class PlayerController : MonoBehaviour
         isDashing = true;
         float originalgGavity = rb.gravityScale;
         rb.gravityScale = 0;
-        if (rb.velocity.x > 0)
+
+        if (rb.velocity.x < 0)
         {
-            rb.velocity = new Vector2(transform.localScale.x * dashingPower, 0f);
+            rb.velocity = new Vector2(transform.localScale.x * -dashingPower, 0f);
         }
-        else if (rb.velocity.x < 0)
+        else if (rb.velocity.x > 0)
         {
             rb.velocity = new Vector2(transform.localScale.x * -dashingPower, 0f);
         }
