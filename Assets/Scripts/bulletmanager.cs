@@ -12,22 +12,21 @@ public class bulletmanager : MonoBehaviour
 
     [SerializeField]
     GameObject bulletPrefab;
+    string sceneName;
 
     private void Awake() 
     {
-        Scene currentScene = SceneManager.GetActiveScene();
-        string sceneName = currentScene.name;
+
         DontDestroyOnLoad(this.gameObject);
-        if (sceneName == "Dead")
-        {
-            Destroy(this.gameObject);
-        }
+
     }
 
     void Update()
-    {
+    {        
+        Scene currentScene = SceneManager.GetActiveScene();
+        string sceneName = currentScene.name;
         timeSinceLastBullet += Time.deltaTime;
-        if (timeSinceLastBullet > timeBetweenBullet)
+        if (timeSinceLastBullet > timeBetweenBullet && sceneName == "Main")
         {
             Instantiate(bulletPrefab);
             timeSinceLastBullet = 0f;
