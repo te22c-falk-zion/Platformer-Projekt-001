@@ -29,16 +29,16 @@ public class bulletController : MonoBehaviour
         if(spawnLeft == false)
         {
         Vector2 position = new();
-        position.y = Random.Range(-Camera.main.orthographicSize, Camera.main.orthographicSize + 4);
-        position.x = Camera.main.orthographicSize + 3;
+        position.y = Random.Range(-Camera.main.orthographicSize, Camera.main.orthographicSize + 9);
+        position.x = Camera.main.orthographicSize + 11;
 
         transform.position = position;
         }
         if(spawnLeft == true)
         {
         Vector2 position = new();
-            position.y = Random.Range(-Camera.main.orthographicSize, Camera.main.orthographicSize+4);
-            position.x = -Camera.main.orthographicSize - 3;
+            position.y = Random.Range(-Camera.main.orthographicSize, Camera.main.orthographicSize + 9);
+            position.x = -Camera.main.orthographicSize - 11;
 
             transform.position = position;
         }
@@ -52,7 +52,7 @@ public class bulletController : MonoBehaviour
             Vector2 movement = Vector2.left * speed * Time.deltaTime;
             transform.Translate(movement);
 
-            if (transform.position.x < (-Camera.main.orthographicSize -3))
+            if (transform.position.x < (-Camera.main.orthographicSize - 11))
             {
                 Destroy(this.gameObject);
             }
@@ -62,7 +62,7 @@ public class bulletController : MonoBehaviour
             Vector2 movement = Vector2.right * speed * Time.deltaTime;
             transform.Translate(movement);
 
-            if (transform.position.x > (Camera.main.orthographicSize +3))
+            if (transform.position.x > (Camera.main.orthographicSize + 11))
             {
                 Destroy(this.gameObject);
             }

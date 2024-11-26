@@ -6,15 +6,19 @@ using System.Reflection.Emit;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.Callbacks;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {   
     private int health = 100;
+    [SerializeField] Slider hpBar;
     private float xMove;
     [SerializeField] float jumpForce = 10;
     [SerializeField] float speed = 8f; 
+    public bool directionalKey;
 
     bool isFacingRight = false;
     private float wallCheckerPosition;
@@ -23,8 +27,8 @@ public class PlayerController : MonoBehaviour
     private bool isWallSliding;
     private float wallSlidingSpeed = 2f;
     private int wallJumpCounter;
-    private Vector2 wallJumpingPower = new Vector2(8f, 16f);
-    bool mayJump = true;
+    private Vector2 wallJumpingPower = new Vector2(12f, 24f);
+    bool mayDJump = true;
 
     private float dashingPower = 24f;
     private float dashingTime = 0.2f;
@@ -43,9 +47,11 @@ public class PlayerController : MonoBehaviour
     void Start() 
     {
         health = 100;
+        hpBar.maxValue = health;
     }
     void Update()
     {
+        hpBar.value = health;
 
         if (isDashing)
         {
@@ -53,6 +59,7 @@ public class PlayerController : MonoBehaviour
         }
 
         float xMove = Input.GetAxisRaw("Horizontal");
+
         rb.velocity = new Vector2(xMove * speed, rb.velocity.y); 
 
         if (Input.GetButtonDown("Jump") && isGrounded())
@@ -64,7 +71,14 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
         }
 
+        if(xMove != 0f)
+        {
+            directionalKey = true;
+        }
+
         WallSlide();
+        DoubleJump();
+        WallJump();
 
 
         if(Input.GetKeyDown(KeyCode.Q) && canDash == true)
@@ -85,6 +99,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Physics2D.OverlapCircle(groundChecker.position, 0.2f, groundLayer))
         {
+            mayDJump = true;
             return true;
         }
         else
@@ -95,14 +110,23 @@ public class PlayerController : MonoBehaviour
 
     private bool isWalled()
     {
-        return Physics2D.OverlapCircle(wallChecker.position, 0.2f, wallLayer);
+
+        if (Physics2D.OverlapCircle(wallChecker.position, 0.2f, wallLayer))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     private void WallSlide()
     {
-        if (isWalled() && !isGrounded() || xMove != 0f)
+        if (isWalled() && !isGrounded() && directionalKey == true)
         {
             isWallSliding = true;
+            mayDJump = true;
             rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -wallSlidingSpeed, float.MaxValue));
         }
         else
@@ -111,19 +135,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // private void WallJump()
-    // {
-    //     if(Input.GetButtonDown("Jump") && wallJumpCounter <= 3)
-    //     {
-
-    //         rb.velocity = new Vector2(wallJumpingPower.x, wallJumpingPower.y);
-    //         wallJumpCounter ++;
-    //     }
-    //     if(isGrounded())
-    //     {
-    //         wallJumpCounter = 0;
-    //     }
-    // }
+    private void WallJump()
+    {
+        if(Input.GetButtonDown("Jump") && wallJumpCounter <= 5 && !isGrounded() && isWalled())
+        {
+            rb.velocity = new Vector2(-wallJumpingPower.x, wallJumpingPower.y);
+            wallJumpCounter ++;
+        }
+        if(isGrounded())
+        {
+            wallJumpCounter = 0;
+        }
+    }
 
 
 
@@ -162,10 +185,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void DoubleJump()
+    {
+        if (mayDJump == true && Input.GetButtonDown("Jump") && !isGrounded())
+        {
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            mayDJump = false;
+        }
+    }
+
     public void TakeDamage(int amount)
     {
         health -= amount;
-        Debug.Log("" + health);
+        Debug.Log(health);
         if (health <= 0)
         {
             SceneManager.LoadScene(1);
